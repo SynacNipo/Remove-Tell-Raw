@@ -10,6 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -28,3 +31,17 @@ jobs:
         with:
           name: RemoveTellRaw
           path: target/*.jar
+
+      - name: Create Release
+        if: github.event_name == 'push'
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: target/*.jar
+          tag: latest
+          name: Latest Build
+          body: |
+            Automated build from commit ${{ github.sha }}
+          removeArtifacts: true
+          allowUpdates: true
+          replacesArtifacts: true
+          makeLatest: true
