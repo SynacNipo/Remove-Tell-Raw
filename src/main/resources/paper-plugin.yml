@@ -1,0 +1,6 @@
+name: RemoveTellRaw
+version: 1.0.0
+main: com.github.synacnipo.removetellraw.RemoveTellRaw
+api-version: '26.1.2'
+description: Disables the /tellraw command entirely
+author: SynacNipo
