@@ -6,6 +6,8 @@ Disables `/tellraw` completely — players, console, command blocks, and other p
 - Cancels `PlayerCommandPreprocessEvent` and `ServerCommandEvent`
 - Requires **Paper 26.1+** and **Java 25**
 
-```yaml
-# put the jar in plugins/ and restart
-```
+## Usage
+
+1. Place the jar in your server's `plugins/` folder
+2. Restart the server (or run `/reload`)
+3. `/tellraw` is now disabled for everyone
