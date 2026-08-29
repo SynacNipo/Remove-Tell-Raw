@@ -8,6 +8,8 @@ def yarnMappings = providers.gradleProperty('yarn_mappings').orNull()
 def loaderVersion = providers.gradleProperty('loader_version').orElse('0.19.3').get()
 def fabricApiVersion = providers.gradleProperty('fabric_api_version').orElse('0.158.0+26.2').get()
 
+def useYarnMappings = minecraftVersion == '1.21.11' && yarnMappings != null && !yarnMappings.trim().isEmpty()
+
 group = 'com.github.synacnipo'
 version = '1.0.0'
 base {
@@ -21,7 +23,7 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraftVersion}"
-    if (yarnMappings != null && !yarnMappings.trim().isEmpty()) {
+    if (useYarnMappings) {
         mappings "net.fabricmc:yarn:${yarnMappings}:v2"
     } else {
         mappings loom.officialMojangMappings()
