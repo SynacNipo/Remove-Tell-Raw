@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "removetellraw",
+  "version": "${version}",
+  "name": "RemoveTellRaw",
+  "description": "Disables the /tellraw command entirely",
+  "authors": [
+    "SynacNipo"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.github.synacnipo.removetellraw.fabric.RemoveTellRawFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "*"
+  }
+}
