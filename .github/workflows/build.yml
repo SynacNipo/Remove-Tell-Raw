@@ -33,6 +33,8 @@ jobs:
 
   fabric:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -42,19 +44,15 @@ jobs:
             loader: 0.19.3
             fabric_api: 0.141.6+1.21.11
           - minecraft: 26.1
-            yarn: 26.1+build.3
             loader: 0.19.3
             fabric_api: 0.145.1+26.1
           - minecraft: 26.1.1
-            yarn: 26.1.1+build.1
             loader: 0.19.3
             fabric_api: 0.145.4+26.1.1
           - minecraft: 26.1.2
-            yarn: 26.1.2+build.1
             loader: 0.19.3
             fabric_api: 0.155.2+26.1.2
           - minecraft: 26.2
-            yarn: 26.2+build.1
             loader: 0.19.3
             fabric_api: 0.158.0+26.2
 
@@ -73,11 +71,18 @@ jobs:
       - name: Build Fabric mod for ${{ matrix.minecraft }}
         working-directory: ./fabric
         run: |
-          gradle build \
-            -Pminecraft_version=${{ matrix.minecraft }} \
-            -Pyarn_mappings=${{ matrix.yarn }} \
-            -Ploader_version=${{ matrix.loader }} \
-            -Pfabric_api_version=${{ matrix.fabric_api }}
+          if [ -n "${{ matrix.yarn || '' }}" ]; then
+            gradle build \
+              -Pminecraft_version=${{ matrix.minecraft }} \
+              -Pyarn_mappings=${{ matrix.yarn }} \
+              -Ploader_version=${{ matrix.loader }} \
+              -Pfabric_api_version=${{ matrix.fabric_api }}
+          else
+            gradle build \
+              -Pminecraft_version=${{ matrix.minecraft }} \
+              -Ploader_version=${{ matrix.loader }} \
+              -Pfabric_api_version=${{ matrix.fabric_api }}
+          fi
 
       - name: Upload Fabric artifact
         uses: actions/upload-artifact@v4
@@ -85,13 +90,24 @@ jobs:
           name: RemoveTellRaw-Fabric-${{ matrix.minecraft }}
           path: fabric/build/libs/*.jar
 
-      - name: Create Release
-        if: github.event_name == 'push'
+  release:
+    needs: [paper, fabric]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create GitHub release
         uses: ncipollo/release-action@v1
         with:
           artifacts: |
-            target/*.jar
-            fabric/build/libs/*.jar
+            artifacts/**/*.jar
           tag: latest
           name: Latest Build
           body: |

@@ -4,7 +4,7 @@ plugins {
 }
 
 def minecraftVersion = providers.gradleProperty('minecraft_version').orElse('26.2').get()
-def yarnMappings = providers.gradleProperty('yarn_mappings').orElse(minecraftVersion + '+build.1').get()
+def yarnMappings = providers.gradleProperty('yarn_mappings').orNull()
 def loaderVersion = providers.gradleProperty('loader_version').orElse('0.19.3').get()
 def fabricApiVersion = providers.gradleProperty('fabric_api_version').orElse('0.158.0+26.2').get()
 
@@ -21,7 +21,11 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraftVersion}"
-    mappings "net.fabricmc:yarn:${yarnMappings}:v2"
+    if (yarnMappings != null && !yarnMappings.trim().isEmpty()) {
+        mappings "net.fabricmc:yarn:${yarnMappings}:v2"
+    } else {
+        mappings loom.officialMojangMappings()
+    }
     modImplementation "net.fabricmc:fabric-loader:${loaderVersion}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}"
 }
